@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Button, Container, Typography, Select, MenuItem, InputLabel, FormControl, Snackbar, LinearProgress } from '@mui/material';
 import axios from 'axios';
 import './App.css';
+// import { BarChart } from '@mui/x-charts';
 // import styled from '@emotion/styled';
 
 const FileUploadForm = () => {
@@ -36,15 +37,15 @@ const FileUploadForm = () => {
 
   return (
     <>
-      <Container style={{ backgroundColor: "#1b4552", color: "#eaeaea", padding: "20px", borderRadius: "10px", boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)", textAlign: "center",gap:"4em" }}>
+      <Container style={{ backgroundColor: "#1b4552", color: "#eaeaea", padding: "20px", borderRadius: "10px", boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)", textAlign: "center", gap: "4em" }}>
         {loading && <LinearProgress />}
         <br />
-        <Typography style={{color:"white"}} variant="h5" component="h2" gutterBottom>
+        <Typography style={{ color: "white" }} variant="h5" component="h2" gutterBottom>
           Upload a File
         </Typography>
         <form onSubmit={handleFileUpload}>
           <FormControl variant='filled' fullWidth style={{ marginBottom: "20px" }}>
-            <InputLabel style={{color:"white"}} id="demo-simple-select-label">Select type of Collection</InputLabel>
+            <InputLabel style={{ color: "white" }} id="demo-simple-select-label">Select type of Collection</InputLabel>
             <Select
               labelId="demo-simple-select-label"
               id="demo-simple-select"
@@ -52,7 +53,7 @@ const FileUploadForm = () => {
               value={collection}
               label="Select type of Collection"
               onChange={(e) => setCollection(e.target.value)}
-              style={{ color: "white",border:"10px",borderColor:"white" }}
+              style={{ color: "white", border: "10px", borderColor: "white" }}
             >
               <MenuItem value="Absent">Absent</MenuItem>
               <MenuItem value="Present">Present</MenuItem>
@@ -66,9 +67,19 @@ const FileUploadForm = () => {
             type="file"
             accept=".xlsx"
             name="fileUpload"
-            style={{color:"white"}}
+            style={{
+              color: "white",
+              border: "2px solid white",
+              backgroundColor: "#333",
+              padding: "10px",
+              borderRadius: "5px",
+              cursor: "pointer",
+              outline: "none",
+              boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+              transition: "border-color 0.3s ease-in-out",
+            }}
             onChange={(e) => setFile(e.target.files[0])}
-          />
+          /><br/>
           <Button
             type="submit"
             variant="contained"
