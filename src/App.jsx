@@ -9,7 +9,9 @@ const FileUploadForm = () => {
   const [file, setFile] = useState(null);
   const [collection, setCollection] = useState('');
   const [openSnackbar, setOpenSnackbar] = useState(false);
+    const [openSnackbarError, setOpenSnackbarError] = useState(false)
   const [loading, setLoading] = useState(false)
+
 
 
   const handleFileUpload = async (event) => {
@@ -22,13 +24,17 @@ const FileUploadForm = () => {
       formData.append('collection', collection);
 
       const response = await axios.post('http://localhost:3002/upload-excel', formData);
+      // console.log(response)
       setLoading(false)
       if (response.data.status === "Ok") {
         setOpenSnackbar(true);
         setTimeout(() => {
           setOpenSnackbar(false);
         }, 3000);
+      } else if (response.data.message) {
+        setOpenSnackbarError(true)
       }
+
     } catch (error) {
       console.error('Error uploading file:', error);
     }
@@ -79,7 +85,7 @@ const FileUploadForm = () => {
               transition: "border-color 0.3s ease-in-out",
             }}
             onChange={(e) => setFile(e.target.files[0])}
-          /><br/>
+          /><br />
           <Button
             type="submit"
             variant="contained"
@@ -95,6 +101,12 @@ const FileUploadForm = () => {
           onClose={() => setOpenSnackbar(false)}
           autoHideDuration={3000}
           message="File Uploaded"
+        />
+        <Snackbar
+          open={openSnackbarError}
+          onClose={() => setOpenSnackbarError(false)}
+          autoHideDuration={3000}
+          message="File Name Doesn't Match Please Check "
         />
       </Container>
     </>
