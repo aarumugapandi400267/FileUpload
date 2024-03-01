@@ -47,29 +47,28 @@ app.use(cors())
 app.get('/api/attendance/present', async (req, res) => {
     mongoose.connect("mongodb://0.0.0.0/Student_Management")
     let pattern1 = /^[a-zA-Z]\d{2,6}[a-zA-Z]{2,6}\d{3,5}$/;
-
 })
 
 app.get('/master', async (req, res) => {
     mongoose.connect("mongodb://0.0.0.0/Student_Management")
-    const pattern=/^[a-zA-Z]\d{2,6}[a-zA-Z]{2,6}\d{3,5}(L)?$/
+    const pattern = /^[a-zA-Z]\d{2,6}[a-zA-Z]{2,6}\d{3,5}(L)?$/
     const patternForY = /^([a-zA-Z]+)(\d{2,6})([a-zA-Z]{2,6})(\d{3,5})(L)?$/;
     let FilteredTotalStudents = TotalStudents.filter(row => pattern.test(row.Register_No))
     FilteredTotalStudents.forEach(studentInfo => {
-        const match=studentInfo.Register_No.match(patternForY)
-        if(match){
-            switch (parseInt(match[2])){
+        const match = studentInfo.Register_No.match(patternForY)
+        if (match) {
+            switch (parseInt(match[2])) {
                 case 20:
-                    studentInfo.Year=4
+                    studentInfo.Year = 4
                     break
                 case 21:
-                    studentInfo.Year=3
+                    studentInfo.Year = 3
                     break
                 case 22:
-                    studentInfo.Year=2
+                    studentInfo.Year = 2
                     break
                 case 23:
-                    studentInfo.Year=1 
+                    studentInfo.Year = 1
                     break
             }
         }
@@ -91,6 +90,7 @@ app.post('/upload-excel', upload.single('fileUpload'), async (req, res) => {
         let data = xlsx.utils.sheet_to_json(sheet, { raw: false });
 
         const regex = /^([^-]+)-(\d{2}-\d{2}-\d{4})-(\d{2}-\d{2}-[AP]M)\.xlsx$/;
+        // const pattern = /^[a-zA-Z]\d{2,6}[a-zA-Z]{2,6}\d{3,5}(L)?$/
 
         // Execute the regular expression on the filename
         const matches = fileName.match(regex);
@@ -121,8 +121,12 @@ app.post('/upload-excel', upload.single('fileUpload'), async (req, res) => {
                     const modifiedKey = key.replace(/\s+/g, '_');
                     modifiedRowData[modifiedKey] = rowData[key];
                 });
-                if (!Student_ManagementDB.find(modifiedRowData['Register_No'])) {
-                    return unknown.push(modifiedRowData)
+
+                const pattern = /^[a-zA-Z]\d{2,6}[a-zA-Z]{2,6}\d{3,5}(L)?$/
+
+                if (!pattern.test(modifiedRowData['Register_No'])) {
+                    unknown.push(modifiedRowData['Register_No'])
+                    continue
                 }
                 if (modifiedRowData['Year']) {
                     switch (modifiedRowData['Year']) {
@@ -152,6 +156,7 @@ app.post('/upload-excel', upload.single('fileUpload'), async (req, res) => {
             }
             console.log("Duplicates:", count);
             res.status(200).json({ status: "Ok" });
+            console.log(unknown)
         } else {
             return res.json({ message: "Filename doesn't match the expected pattern." })
         }
