@@ -131,16 +131,16 @@ app.post('/upload-excel', upload.single('fileUpload'), async (req, res) => {
                 if (modifiedRowData['Year']) {
                     switch (modifiedRowData['Year']) {
                         case "I Year":
-                            modifiedRowData['Year'] = 1;
+                            modifiedRowData['Year'] = Student_ManagementDB['Year'];
                             break;
                         case "II Year":
-                            modifiedRowData['Year'] = 2;
+                            modifiedRowData['Year'] = Student_ManagementDB['Year'];
                             break;
                         case "III Year":
-                            modifiedRowData['Year'] = 3;
+                            modifiedRowData['Year'] = Student_ManagementDB['Year'];
                             break;
                         case "IV Year":
-                            modifiedRowData['Year'] = 4;
+                            modifiedRowData['Year'] = Student_ManagementDB['Year'];
                             break;
                     }
                 }
