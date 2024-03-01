@@ -44,9 +44,88 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors())
 
-app.get('/api/attendance/present', async (req, res) => {
-    mongoose.connect("mongodb://0.0.0.0/Student_Management")
-    let pattern1 = /^[a-zA-Z]\d{2,6}[a-zA-Z]{2,6}\d{3,5}$/;
+app.get('/api/attendance/present/dayscholar', async (req, res) => {
+    const DayscholarStudentsPresent = [
+        ...new Set([
+            // ...(await DB.collection("Present").find({}).toArray()),
+            // ...(await DB.collection("Absent").find({}).toArray()),
+            // ...(await DB.collection("Dayscholar_Absent").find({}).toArray()),
+            ...(await DB.collection("Dayscholar_Present").find({}).toArray()),
+            // ...(await DB.collection("Partially_Absent").find({}).toArray()),
+            // ...(await DB.collection("Holiday").find({}).toArray())
+        ])
+    ]
+    res.json(DayscholarStudentsPresent)
+})
+
+app.get('/api/attendance/absent/dayscholar', async (req, res) => {
+    const InstitutionStudentsAbsent = [
+        ...new Set([
+            // ...(await DB.collection("Present").find({}).toArray()),
+            // ...(await DB.collection("Absent").find({}).toArray()),
+            ...(await DB.collection("Dayscholar_Absent").find({}).toArray()),
+            // ...(await DB.collection("Dayscholar_Present").find({}).toArray()),
+            // ...(await DB.collection("Partially_Absent").find({}).toArray()),
+            // ...(await DB.collection("Holiday").find({}).toArray())
+        ])
+    ]
+    res.json(InstitutionStudentsAbsent)
+})
+
+app.get('/api/attendance/absent/hosteller', async (req, res) => {
+    const InstitutionStudentsAbsent = [
+        ...new Set([
+            // ...(await DB.collection("Present").find({}).toArray()),
+            ...(await DB.collection("Absent").find({}).toArray()),
+            // ...(await DB.collection("Dayscholar_Absent").find({}).toArray()),
+            // ...(await DB.collection("Dayscholar_Present").find({}).toArray()),
+            // ...(await DB.collection("Partially_Absent").find({}).toArray()),
+            // ...(await DB.collection("Holiday").find({}).toArray())
+        ])
+    ]
+    res.json(InstitutionStudentsAbsent)
+})
+
+app.get('/api/attendance/present/hosteller', async (req, res) => {
+    const InstitutionStudentsAbsent = [
+        ...new Set([
+            ...(await DB.collection("Present").find({}).toArray()),
+            // ...(await DB.collection("Absent").find({}).toArray()),
+            // ...(await DB.collection("Dayscholar_Absent").find({}).toArray()),
+            // ...(await DB.collection("Dayscholar_Present").find({}).toArray()),
+            // ...(await DB.collection("Partially_Absent").find({}).toArray()),
+            // ...(await DB.collection("Holiday").find({}).toArray())
+        ])
+    ]
+    res.json(InstitutionStudentsAbsent)
+})
+
+app.get('/api/attendance/present/partiallyabsent', async (req, res) => {
+    const InstitutionStudentsAbsent = [
+        ...new Set([
+            // ...(await DB.collection("Present").find({}).toArray()),
+            // ...(await DB.collection("Absent").find({}).toArray()),
+            // ...(await DB.collection("Dayscholar_Absent").find({}).toArray()),
+            // ...(await DB.collection("Dayscholar_Present").find({}).toArray()),
+            ...(await DB.collection("Partially_Absent").find({}).toArray()),
+            // ...(await DB.collection("Holiday").find({}).toArray())
+        ])
+    ]
+    res.json(InstitutionStudentsAbsent)
+})
+
+app.get('/api/attendance/absent/holiday', async (req, res) => {
+    const InstitutionStudentsAbsent = [
+        ...new Set([
+            // ...(await DB.collection("Present").find({}).toArray()),
+            // ...(await DB.collection("Absent").find({}).toArray()),
+            // ...(await DB.collection("Dayscholar_Absent").find({}).toArray()),
+            // ...(await DB.collection("Dayscholar_Present").find({}).toArray()),
+            // ...(await DB.collection("Partially_Absent").find({}).toArray()),
+            ...(await DB.collection("Holiday").find({}).toArray())
+        ])
+    ]
+    res.json(InstitutionStudentsAbsent)
 })
 
 app.get('/master', async (req, res) => {
