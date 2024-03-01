@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "pandi": "concurrently  \"vite\" \"nodemon server.js\"",
+    "sri": "concurrently  \"vite\" \"nodemon server.js\"",
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
@@ -19,6 +19,7 @@
     "axios": "^1.6.7",
     "concurrently": "^8.2.2",
     "cors": "^2.8.5",
+    "express": "^4.18.2",
     "mongodb": "^6.3.0",
     "mongoose": "^8.2.0",
     "multer": "^1.4.5-lts.1",

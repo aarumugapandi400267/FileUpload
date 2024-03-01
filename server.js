@@ -100,7 +100,7 @@ app.post('/upload-excel', upload.single('fileUpload'), async (req, res) => {
             collection == "Absent" && name == "absent" ||
             collection == "Present" && name == "present" ||
             collection == "Holiday" && name == "holiday_students" ||
-            collection == "Partially_Absent" && name == "partially_absent" ||
+            collection == "Partially_Absent" && name == "partiallyabsent" ||
             collection == "Dayscholar_Absent" && name == "dayscholar_absent" ||
             collection == "Dayscholar_Present" && name == "dayscholar_present"
         ) {
