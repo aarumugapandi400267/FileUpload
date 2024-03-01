@@ -3,7 +3,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import multer from 'multer';
 import xlsx from 'xlsx';
-import { MongoClient, ObjectId } from 'mongodb';
+import { MongoClient } from 'mongodb';
 import cors from 'cors'
 import mongoose from 'mongoose';
 
@@ -14,6 +14,7 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 const Client = new MongoClient('mongodb://0.0.0.0/');
 const DB = Client.db("Biometric_Maintainance");
+const Student_ManagementDB=Client.db("Student_Management").collection("information")
 const Schema=mongoose.Schema
 
 const StudentSchema=new Schema({
@@ -43,15 +44,32 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors())
 
 app.get('/api/attendance/present', async (req, res) => {
+    mongoose.connect("mongodb://0.0.0.0/Student_Management")
     let pattern1 = /^[a-zA-Z]\d{2,6}[a-zA-Z]{2,6}\d{3,5}$/;
     let FilteredTotalStudents = TotalStudents.filter(row => pattern1.test(row.Register_No))
-    res.json(TotalStudents.length)
+    await StudentSchemaModel.insertMany(FilteredTotalStudents)
+    res.json(FilteredTotalStudents)
 })
 
 app.get('/master',async(req,res)=>{
+    // const TotalStudents = [
+    //     ...new Set([
+    //         ...(await DB.collection("Present").find({},{projection:{Register_No:1,Student_Name:1,Gender:1,Institution:1,Department:1,Year:1,Course:1}}).toArray()),
+    //         ...(await DB.collection("Absent").find({},{projection:{Register_No:1,Student_Name:1,Gender:1,Institution:1,Department:1,Year:1,Course:1}}).toArray()),
+    //         ...(await DB.collection("Dayscholar_Absent").find({},{projection:{Register_No:1,Student_Name:1,Gender:1,Institution:1,Department:1,Year:1,Course:1}}).toArray()),
+    //         ...(await DB.collection("Dayscholar_Present").find({},{projection:{Register_No:1,Student_Name:1,Gender:1,Institution:1,Department:1,Year:1,Course:1}}).toArray()),
+    //         ...(await DB.collection("Partially_Absent").find({},{projection:{Register_No:1,Student_Name:1,Gender:1,Institution:1,Department:1,Year:1,Course:1}}).toArray()),
+    //         ...(await DB.collection("Holiday").find({},{projection:{Register_No:1,Student_Name:1,Gender:1,Institution:1,Department:1,Year:1,Course:1}}).toArray())
+    //     ])
+    // ]
+    // mongoose.connect("mongodb://0.0.0.0/Student_Management")
+    // StudentSchemaModel.insertMany(TotalStudents)
+    // res.json("Ok")
     mongoose.connect("mongodb://0.0.0.0/Student_Management")
-    StudentSchemaModel.insertMany(TotalStudents)
-    res.json("Ok")
+    let pattern1 = /^[a-zA-Z]\d{2,6}[a-zA-Z]{2,6}\d{2,5}(L)?$/;
+    let FilteredTotalStudents = TotalStudents.filter(row => pattern1.test(row.Register_No))
+    await StudentSchemaModel.insertMany(FilteredTotalStudents)
+    res.json(FilteredTotalStudents)
 })
 
 app.post('/upload-excel', upload.single('fileUpload'), async (req, res) => {
@@ -87,6 +105,7 @@ app.post('/upload-excel', upload.single('fileUpload'), async (req, res) => {
             collection == "Dayscholar_Present" && name == "dayscholar_present"
         ) {
             let count = 0;
+            let unknown=[]
             for (let i = 0; i < data.length; i++) {
 
                 let rowData = data[i];
@@ -96,6 +115,9 @@ app.post('/upload-excel', upload.single('fileUpload'), async (req, res) => {
                     const modifiedKey = key.replace(/\s+/g, '_');
                     modifiedRowData[modifiedKey] = rowData[key];
                 });
+                if(! Student_ManagementDB.find(modifiedRowData['Register_No'])){
+                    return unknown.push(modifiedRowData)
+                }
                 if (modifiedRowData['Year']) {
                     switch (modifiedRowData['Year']) {
                         case "I Year":
