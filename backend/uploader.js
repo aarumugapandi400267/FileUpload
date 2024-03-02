@@ -4,7 +4,7 @@ import { DB, Student_ManagementDB } from '../server.js';
 const uploader = async (req, res) => {
     try {
         const { collection } = req.body;
-        const Collection = DB.collection(String(collection));
+        const Collection = DB.collection(collection);
         const file = req.file
         const fileName = file.originalname
         const fileBuffer = file.buffer;
@@ -85,11 +85,12 @@ const uploader = async (req, res) => {
                     modifiedRowData['Course'] = foundStudent['Course']
                     modifiedRowData['Department'] = foundStudent['Department']
                     modifiedRowData['Gender'] = foundStudent['Gender']
-
-                    if (!Collection.find(modifiedRowData)) {
-                        Collection.insertOne(modifiedRowData)
-                        count+=1
-                    }else{
+                    delete modifiedRowData['S_No']
+                    const isalreadyUploaded=await Collection.findOne({Register_No:modifiedRowData['Register_No']})
+                    // console.log(isalreadyUploaded);
+                    if (!isalreadyUploaded) {
+                        await Collection.insertOne(modifiedRowData)
+                        console.log("Ok");
                     }
                 } else {
                     unknown.push(rowData)
