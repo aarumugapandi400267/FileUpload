@@ -45,207 +45,46 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors())
 
-app.get('/api/attendance/present/dayscholar', async (req, res) => {
-    const DayscholarStudentsPresent = [
-        ...new Set([
-            // ...(await DB.collection("Present").find({}).toArray()),
-            // ...(await DB.collection("Absent").find({}).toArray()),
-            // ...(await DB.collection("Dayscholar_Absent").find({}).toArray()),
-            ...(await DB.collection("Dayscholar_Present").find({}).toArray()),
-            // ...(await DB.collection("Partially_Absent").find({}).toArray()),
-            // ...(await DB.collection("Holiday").find({}).toArray())
-        ])
-    ]
-    res.json(DayscholarStudentsPresent)
-})
-
-app.get('/api/attendance/absent/dayscholar', async (req, res) => {
-    const InstitutionStudentsAbsent = [
-        ...new Set([
-            // ...(await DB.collection("Present").find({}).toArray()),
-            // ...(await DB.collection("Absent").find({}).toArray()),
-            ...(await DB.collection("Dayscholar_Absent").find({}).toArray()),
-            // ...(await DB.collection("Dayscholar_Present").find({}).toArray()),
-            // ...(await DB.collection("Partially_Absent").find({}).toArray()),
-            // ...(await DB.collection("Holiday").find({}).toArray())
-        ])
-    ]
-    res.json(InstitutionStudentsAbsent)
-})
-
-app.get('/api/attendance/absent/hosteller', async (req, res) => {
-    const InstitutionStudentsAbsent = [
-        ...new Set([
-            // ...(await DB.collection("Present").find({}).toArray()),
-            ...(await DB.collection("Absent").find({}).toArray()),
-            // ...(await DB.collection("Dayscholar_Absent").find({}).toArray()),
-            // ...(await DB.collection("Dayscholar_Present").find({}).toArray()),
-            // ...(await DB.collection("Partially_Absent").find({}).toArray()),
-            // ...(await DB.collection("Holiday").find({}).toArray())
-        ])
-    ]
-    res.json(InstitutionStudentsAbsent)
-})
-
-app.get('/api/attendance/present/hosteller', async (req, res) => {
-    const InstitutionStudentsAbsent = [
+app.get('/api/attendance/present', async (req, res) => {
+    const TotalStudentsPresent = [
         ...new Set([
             ...(await DB.collection("Present").find({}).toArray()),
-            // ...(await DB.collection("Absent").find({}).toArray()),
-            // ...(await DB.collection("Dayscholar_Absent").find({}).toArray()),
-            // ...(await DB.collection("Dayscholar_Present").find({}).toArray()),
-            // ...(await DB.collection("Partially_Absent").find({}).toArray()),
-            // ...(await DB.collection("Holiday").find({}).toArray())
+            ...(await DB.collection("Dayscholar_Present").find({}).toArray())
         ])
     ]
-    res.json(InstitutionStudentsAbsent)
+    res.json(TotalStudentsPresent)
 })
-
-app.get('/api/attendance/present/partiallyabsent', async (req, res) => {
-    const InstitutionStudentsAbsent = [
+app.get('/api/attendance/absent', async (req, res) => {
+    const TotalStudentsAbsent = [
         ...new Set([
-            // ...(await DB.collection("Present").find({}).toArray()),
-            // ...(await DB.collection("Absent").find({}).toArray()),
-            // ...(await DB.collection("Dayscholar_Absent").find({}).toArray()),
-            // ...(await DB.collection("Dayscholar_Present").find({}).toArray()),
-            ...(await DB.collection("Partially_Absent").find({}).toArray()),
-            // ...(await DB.collection("Holiday").find({}).toArray())
+            ...(await DB.collection("Absent").find({}).toArray()),
+            ...(await DB.collection("Dayscholar_Absent").find({}).toArray())
         ])
     ]
-    res.json(InstitutionStudentsAbsent)
+    res.json(TotalStudentsAbsent)
 })
-
-app.get('/api/attendance/absent/holiday', async (req, res) => {
-    const InstitutionStudentsAbsent = [
+app.get('/api/attendance/partiallyabsent', async (req, res) => {
+    const TotalStudentsPartiallyAbsent = [
         ...new Set([
-            // ...(await DB.collection("Present").find({}).toArray()),
-            // ...(await DB.collection("Absent").find({}).toArray()),
-            // ...(await DB.collection("Dayscholar_Absent").find({}).toArray()),
-            // ...(await DB.collection("Dayscholar_Present").find({}).toArray()),
-            // ...(await DB.collection("Partially_Absent").find({}).toArray()),
+            ...(await DB.collection("Partially_Absent").find({}).toArray())
+        ]) 
+    ]
+    res.json(TotalStudentsPartiallyAbsent)
+})
+app.get('/api/attendance/holiday-student', async (req, res) => {
+    const HolidayStudents = [
+        ...new Set([
             ...(await DB.collection("Holiday").find({}).toArray())
         ])
     ]
-    res.json(InstitutionStudentsAbsent)
+    res.json(HolidayStudents)
 })
 
-app.get('/master', async (req, res) => {
-    mongoose.connect("mongodb://0.0.0.0/Student_Management")
-    const pattern = /^[a-zA-Z]\d{2,6}[a-zA-Z]{2,6}\d{3,5}(L)?$/
-    const patternForY = /^([a-zA-Z]+)(\d{2,6})([a-zA-Z]{2,6})(\d{3,5})(L)?$/;
-    let FilteredTotalStudents = TotalStudents.filter(row => pattern.test(row.Register_No))
-    FilteredTotalStudents.forEach(studentInfo => {
-        const match = studentInfo.Register_No.match(patternForY)
-        if (match) {
-            switch (parseInt(match[2])) {
-                case 20:
-                    studentInfo.Year = 4
-                    break
-                case 21:
-                    studentInfo.Year = 3
-                    break
-                case 22:
-                    studentInfo.Year = 2
-                    break
-                case 23:
-                    studentInfo.Year = 1
-                    break
-            }
-        }
-    })
-    await StudentSchemaModel.insertMany(FilteredTotalStudents)
-    res.json(FilteredTotalStudents)
-})
 
-app.post('/upload-excel', upload.single('fileUpload'), async (req, res) => {
-    try {
-        const { collection } = req.body;
-        const Collection = DB.collection(String(collection));
-        const file = req.file
-        const fileName = file.originalname
-        const fileBuffer = file.buffer;
-        const workbook = xlsx.read(fileBuffer, { type: 'buffer' });
-        const sheetName = workbook.SheetNames[0];
-        const sheet = workbook.Sheets[sheetName];
-        let data = xlsx.utils.sheet_to_json(sheet, { raw: false });
+ 
+app.get('/master', master)
 
-        const regex = /^([^-]+)-(\d{2}-\d{2}-\d{4})-(\d{2}-\d{2}-[AP]M)\.xlsx$/;
-        // const pattern = /^[a-zA-Z]\d{2,6}[a-zA-Z]{2,6}\d{3,5}(L)?$/
-
-        // Execute the regular expression on the filename
-        const matches = fileName.match(regex);
-        var name
-        if (matches && matches.length === 4) {
-            name = matches[1];
-            const date = matches[2];
-            const time = matches[3];
-        } else {
-            return res.json({ message: "Filename doesn't match the expected pattern." });
-        }
-        if (
-            collection == "Absent" && name == "absent" ||
-            collection == "Present" && name == "present" ||
-            collection == "Holiday" && name == "holiday_students" ||
-            collection == "Partially_Absent" && name == "partially_absent" ||
-            collection == "Dayscholar_Absent" && name == "dayscholar_absent" ||
-            collection == "Dayscholar_Present" && name == "dayscholar_present"
-        ) {
-            let count = 0;
-            let unknown = []
-            for (let i = 0; i < data.length; i++) {
-
-                let rowData = data[i];
-
-                let modifiedRowData = {};
-                Object.keys(rowData).forEach(key => {
-                    const modifiedKey = key.replace(/\s+/g, '_');
-                    modifiedRowData[modifiedKey] = rowData[key];
-                });
-
-                const pattern = /^[a-zA-Z]\d{2,6}[a-zA-Z]{2,6}\d{3,5}(L)?$/
-
-                if (!pattern.test(modifiedRowData['Register_No'])) {
-                    unknown.push(modifiedRowData['Register_No'])
-                    continue
-                }
-                if (modifiedRowData['Year']) {
-                    switch (modifiedRowData['Year']) {
-                        case "I Year":
-                            modifiedRowData['Year'] = Student_ManagementDB['Year'];
-                            break;
-                        case "II Year":
-                            modifiedRowData['Year'] = Student_ManagementDB['Year'];
-                            break;
-                        case "III Year":
-                            modifiedRowData['Year'] = Student_ManagementDB['Year'];
-                            break;
-                        case "IV Year":
-                            modifiedRowData['Year'] = Student_ManagementDB['Year'];
-                            break;
-                    }
-                }
-                if (modifiedRowData['S_No']) {
-                    modifiedRowData['S_No'] = parseInt(modifiedRowData['S_No']);
-                }
-                delete modifiedRowData["Fee_Status"];
-                if (!await Collection.findOne(modifiedRowData)) {
-                    await Collection.insertOne(modifiedRowData);
-                } else {
-                    count += 1;
-                }
-            }
-            console.log("Duplicates:", count);
-            res.status(200).json({ status: "Ok" });
-            console.log(unknown)
-        } else {
-            return res.json({ message: "Filename doesn't match the expected pattern." })
-        }
-
-    } catch (error) {
-        console.error('Error processing file:', error);
-        res.status(500).send('Internal Server Error');
-    }
-});
+app.post('/upload-excel', upload.single('fileUpload'),uploader );
 
 app.get('/api/attendance/present/:college', async (req, res) => {
     const toBeFind = req.params.college

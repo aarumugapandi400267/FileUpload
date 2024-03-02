@@ -90,13 +90,15 @@ const uploader = async (req, res) => {
                     // console.log(isalreadyUploaded);
                     if (!isalreadyUploaded) {
                         await Collection.insertOne(modifiedRowData)
-                        console.log("Ok");
+                        // console.log("Ok");
+                    }else{
+
                     }
                 } else {
                     unknown.push(rowData)
-                }
+                } 
             })
-            console.log(unknown);
+            // console.log(unknown);
             return res.json({ status: "Ok" })
         } else {
             return res.json({ message: "Filename doesn't match the expected pattern." })
