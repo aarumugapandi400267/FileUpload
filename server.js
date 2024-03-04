@@ -74,7 +74,7 @@ app.get('/api/attendance/partiallyabsent/:date', async (req, res) => {
     ]
     res.json(TotalStudentsPartiallyAbsent)
 })
-app.get('/api/attendance/holiday-student/date', async (req, res) => {
+app.get('/api/attendance/holiday-student/:date', async (req, res) => {
     const date=req.params.date
     const HolidayStudents = [
         ...new Set([
@@ -87,14 +87,13 @@ app.get('/api/attendance/holiday-student/date', async (req, res) => {
 app.get('/masterdb',async(req,res)=>{
     const wholeData=await Student_ManagementDB.find({}).toArray()
     res.json(wholeData)
-
 })
  
 // app.get('/master', master)
 
 app.post('/upload-excel', upload.single('fileUpload'),uploader );
 
-app.get('/api/attendance/present/:college:/date', async (req, res) => {
+app.get('/api/attendance/present/:college/:date', async (req, res) => {
     const date=req.params.date
     const toBeFind = req.params.college
     const hosteller = DB.collection("Present"+date)
@@ -120,7 +119,7 @@ app.get('/api/attendance/absent/:college/:date', async (req, res) => {
     res.json(TotalPresent)
 })
  
-app.get('/api/attendance/partially_absent/:college/date', async (req, res) => {
+app.get('/api/attendance/partially_absent/:college/:date', async (req, res) => {
     const date=req.params.date
     const toBeFind = req.params.college
     const Partially_Absent = DB.collection("Partially_Absent"+date)
