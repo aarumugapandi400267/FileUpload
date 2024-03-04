@@ -7,8 +7,7 @@ import { MongoClient } from 'mongodb';
 import cors from 'cors'
 import mongoose from 'mongoose';
 import { uploader } from './backend/uploader.js';
-
-import { master } from './backend/master.js';
+// import { master } from './backend/master.js';
 const app = express();
 const PORT = 3002;
 
