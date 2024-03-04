@@ -45,51 +45,60 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors())
 
-app.get('/api/attendance/present', async (req, res) => {
+app.get('/api/attendance/present/:date', async (req, res) => {
+    const date=req.params.date
     const TotalStudentsPresent = [
         ...new Set([
-            ...(await DB.collection("Present").find({}).toArray()),
-            ...(await DB.collection("Dayscholar_Present").find({}).toArray())
+            ...(await DB.collection("Present"+date).find({}).toArray()),
+            ...(await DB.collection("Dayscholar_Present"+date).find({}).toArray())
         ])
     ]
     res.json(TotalStudentsPresent)
 })
-app.get('/api/attendance/absent', async (req, res) => {
+app.get('/api/attendance/absent/:date', async (req, res) => {
+    const date=req.params.date
     const TotalStudentsAbsent = [
         ...new Set([
-            ...(await DB.collection("Absent").find({}).toArray()),
-            ...(await DB.collection("Dayscholar_Absent").find({}).toArray())
+            ...(await DB.collection("Absent"+date).find({}).toArray()),
+            ...(await DB.collection("Dayscholar_Absent"+date).find({}).toArray())
         ])
     ]
     res.json(TotalStudentsAbsent)
 })
-app.get('/api/attendance/partiallyabsent', async (req, res) => {
+app.get('/api/attendance/partiallyabsent/:date', async (req, res) => {
+    const date=req.params.date
     const TotalStudentsPartiallyAbsent = [
         ...new Set([
-            ...(await DB.collection("Partially_Absent").find({}).toArray())
+            ...(await DB.collection("Partially_Absent"+date).find({}).toArray())
         ]) 
     ]
     res.json(TotalStudentsPartiallyAbsent)
 })
-app.get('/api/attendance/holiday-student', async (req, res) => {
+app.get('/api/attendance/holiday-student/date', async (req, res) => {
+    const date=req.params.date
     const HolidayStudents = [
         ...new Set([
-            ...(await DB.collection("Holiday").find({}).toArray())
+            ...(await DB.collection("Holiday"+date).find({}).toArray())
         ])
     ]
     res.json(HolidayStudents)
 })
 
+app.get('/masterdb',async(req,res)=>{
+    const wholeData=await Student_ManagementDB.find({}).toArray()
+    res.json(wholeData)
 
+})
  
-app.get('/master', master)
+// app.get('/master', master)
 
 app.post('/upload-excel', upload.single('fileUpload'),uploader );
 
-app.get('/api/attendance/present/:college', async (req, res) => {
+app.get('/api/attendance/present/:college:/date', async (req, res) => {
+    const date=req.params.date
     const toBeFind = req.params.college
-    const hosteller = DB.collection("Present")
-    const dayscholar = DB.collection("Dayscholar_Present")
+    const hosteller = DB.collection("Present"+date)
+    const dayscholar = DB.collection("Dayscholar_Present"+date)
 
     const DayscholarPresentCount = await dayscholar.find({ Institution: toBeFind }).toArray()
     const HostellerPresentCount = await hosteller.find({ Institution: toBeFind }).toArray()
@@ -98,10 +107,11 @@ app.get('/api/attendance/present/:college', async (req, res) => {
     res.json(TotalPresent)
 })
 
-app.get('/api/attendance/absent/:college', async (req, res) => {
+app.get('/api/attendance/absent/:college/:date', async (req, res) => {
+    const date=req.params.date
     const toBeFind = req.params.college
-    const hosteller = DB.collection("Absent")
-    const dayscholar = DB.collection("Dayscholar_Absent")
+    const hosteller = DB.collection("Absent"+date)
+    const dayscholar = DB.collection("Dayscholar_Absent"+date)
 
     const DayscholarPresentCount = await dayscholar.find({ Institution: toBeFind }).toArray()
     const HostellerPresentCount = await hosteller.find({ Institution: toBeFind }).toArray()
@@ -110,9 +120,10 @@ app.get('/api/attendance/absent/:college', async (req, res) => {
     res.json(TotalPresent)
 })
  
-app.get('/api/attendance/partially_absent/:college', async (req, res) => {
+app.get('/api/attendance/partially_absent/:college/date', async (req, res) => {
+    const date=req.params.date
     const toBeFind = req.params.college
-    const Partially_Absent = DB.collection("Partially_Absent")
+    const Partially_Absent = DB.collection("Partially_Absent"+date)
     const DayscholarPresentCount = await Partially_Absent.find({ Institution: toBeFind }).toArray()
     const TotalPresent = [...new Set([...DayscholarPresentCount])]
     res.json(TotalPresent)

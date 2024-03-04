@@ -2,8 +2,6 @@ import { useState } from 'react';
 import { Button, Container, Typography, Select, MenuItem, InputLabel, FormControl, Snackbar, LinearProgress } from '@mui/material';
 import axios from 'axios';
 import './App.css';
-// import { BarChart } from '@mui/x-charts';
-// import styled from '@emotion/styled';
 
 const FileUploadForm = () => {
   const [file, setFile] = useState(null);

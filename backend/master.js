@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { TotalStudents,StudentSchemaModel,DB } from '../server.js';
+import { TotalStudents,DB } from '../server.js';
 
 const master = async (req, res) => {
     mongoose.connect("mongodb://0.0.0.0/Student_Management")
@@ -7,7 +7,6 @@ const master = async (req, res) => {
     const patternForY = /^([a-zA-Z]+)(20|21|22|23)([a-zA-Z]{2,6})(\d{3,5})(L)?$/;
     let FilteredTotalStudents = TotalStudents.filter(row => patternForY.test(row.Register_No))
     let fake = TotalStudents.filter(row => !patternForY.test(row.Register_No))
-
     FilteredTotalStudents.forEach(studentInfo => {
         const match = studentInfo.Register_No.match(patternForY)
         if (match) {
