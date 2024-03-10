@@ -18,7 +18,7 @@ const DB = Client.db("Biometric_Maintainance");
 const Student_ManagementDB = Client.db("Student_Management").collection("information")
 const Schema = mongoose.Schema
 
-const StudentSchema = new Schema({
+const StudentSchema = new Schema({ 
     Institution: String,
     Course: String,
     Department: String,
