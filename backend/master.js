@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { TotalStudents,DB } from '../server.js';
+import { TotalStudents, DB, StudentSchemaModel } from '../server.js';
 
 const master = async (req, res) => {
     mongoose.connect("mongodb://0.0.0.0/Student_Management")
@@ -74,7 +74,9 @@ const master = async (req, res) => {
                     studentInfo.Department = "Agri"; break
                 case "MECS":
                     studentInfo.Department = "MECS"; break
-                case "ME" || "MC":
+                case "ME":
+                    studentInfo.Department = "Mech"; break
+                case "MC":
                     studentInfo.Department = "Mech"; break
                 case "BE":
                     studentInfo.Department = "Bio-Medical"; break
@@ -97,14 +99,14 @@ const master = async (req, res) => {
                     case 22:
                         studentInfo.Year = 2; break
                     case 23:
-                        studentInfo.Year=1; 
+                        studentInfo.Year = 1;
                 }
             }
             if (match[1] == "E" && match[5] == "L") {
-                
+
                 switch (parseInt(match[2])) {
                     case 20:
-                        studentInfo.Year=5;break
+                        studentInfo.Year = 5; break
                     case 21:
                         studentInfo.Year = 4; break
                     case 22:
@@ -114,9 +116,12 @@ const master = async (req, res) => {
                 }
             }
         }
+        if (studentInfo.Year == 5) {
+            const indexToRemove = FilteredTotalStudents.indexOf(studentInfo);
+            FilteredTotalStudents.splice(indexToRemove, 1);
+        }
     })
-    // await StudentSchemaModel.insertMany(FilteredTotalStudents)
-    await DB.collection("Fake").insertMany(fake)
+    await StudentSchemaModel.insertMany(FilteredTotalStudents)
     res.json(FilteredTotalStudents)
 }
 

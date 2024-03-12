@@ -7,7 +7,7 @@ import { MongoClient } from 'mongodb';
 import cors from 'cors'
 import mongoose from 'mongoose';
 import { uploader } from './backend/uploader.js';
-// import { master } from './backend/master.js';
+import { master } from './backend/master.js';
 const app = express();
 const PORT = 3002;
 
@@ -31,19 +31,19 @@ const StudentSchemaModel = mongoose.model("Information", StudentSchema)
 
 const TotalStudents = [
     ...new Set([
-        ...(await DB.collection("Present").find({}, { projection: { Register_No: 1, Student_Name: 1, Gender: 1, Institution: 1, Department: 1, Year: 1, Course: 1 } }).toArray()),
-        ...(await DB.collection("Absent").find({}, { projection: { Register_No: 1, Student_Name: 1, Gender: 1, Institution: 1, Department: 1, Year: 1, Course: 1 } }).toArray()),
-        ...(await DB.collection("Dayscholar_Absent").find({}, { projection: { Register_No: 1, Student_Name: 1, Gender: 1, Institution: 1, Department: 1, Year: 1, Course: 1 } }).toArray()),
-        ...(await DB.collection("Dayscholar_Present").find({}, { projection: { Register_No: 1, Student_Name: 1, Gender: 1, Institution: 1, Department: 1, Year: 1, Course: 1 } }).toArray()),
-        ...(await DB.collection("Partially_Absent").find({}, { projection: { Register_No: 1, Student_Name: 1, Gender: 1, Institution: 1, Department: 1, Year: 1, Course: 1 } }).toArray()),
-        ...(await DB.collection("Holiday").find({}, { projection: { Register_No: 1, Student_Name: 1, Gender: 1, Institution: 1, Department: 1, Year: 1, Course: 1 } }).toArray())
+        ...(await DB.collection("Present20-02-2024").find({}, { projection: { Register_No: 1, Student_Name: 1, Gender: 1, Institution: 1, Department: 1, Year: 1, Course: 1 } }).toArray()),
+        ...(await DB.collection("Absent20-02-2024").find({}, { projection: { Register_No: 1, Student_Name: 1, Gender: 1, Institution: 1, Department: 1, Year: 1, Course: 1 } }).toArray()),
+        ...(await DB.collection("Dayscholar_Absent20-02-2024").find({}, { projection: { Register_No: 1, Student_Name: 1, Gender: 1, Institution: 1, Department: 1, Year: 1, Course: 1 } }).toArray()),
+        ...(await DB.collection("Dayscholar_Present20-02-2024").find({}, { projection: { Register_No: 1, Student_Name: 1, Gender: 1, Institution: 1, Department: 1, Year: 1, Course: 1 } }).toArray()),
+        ...(await DB.collection("Partially_Absent20-02-2024").find({}, { projection: { Register_No: 1, Student_Name: 1, Gender: 1, Institution: 1, Department: 1, Year: 1, Course: 1 } }).toArray()),
+        ...(await DB.collection("Holiday20-02-2024").find({}, { projection: { Register_No: 1, Student_Name: 1, Gender: 1, Institution: 1, Department: 1, Year: 1, Course: 1 } }).toArray())
     ])
 ]
-
+ 
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors())
-
+ 
 app.get('/api/attendance/present/:date', async (req, res) => {
     const date=req.params.date
     const TotalStudentsPresent = [
@@ -88,7 +88,7 @@ app.get('/masterdb',async(req,res)=>{
     res.json(wholeData)
 })
  
-// app.get('/master', master)
+app.get('/master', master)
 
 app.post('/upload-excel', upload.single('fileUpload'),uploader );
 
@@ -126,12 +126,12 @@ app.get('/api/attendance/partially_absent/:college/:date', async (req, res) => {
     const TotalPresent = [...new Set([...DayscholarPresentCount])]
     res.json(TotalPresent)
 })
-
-
+app.get('/',async(req,res)=>{
+    res.json(TotalStudents)
+})
 
 app.listen(PORT, () => {
     console.log("http://localhost:3002", PORT);
 });
-
 
 export {TotalStudents,DB,Student_ManagementDB,StudentSchemaModel}
