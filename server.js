@@ -54,6 +54,8 @@ app.get('/api/attendance/present/:date', async (req, res) => {
     ]
     res.json(TotalStudentsPresent)
 })
+
+//For particular date
 app.get('/api/attendance/absent/:date', async (req, res) => {
     const date=req.params.date
     const TotalStudentsAbsent = [
@@ -64,6 +66,59 @@ app.get('/api/attendance/absent/:date', async (req, res) => {
     ]
     res.json(TotalStudentsAbsent)
 })
+
+//For * date for absent
+app.get('/api/attendance/absent', async (req, res) => {
+    try {
+        const collectionNames = await DB.listCollections().toArray();
+        let totalAbsentStudents = [];
+        for (let i = 0; i < collectionNames.length; i++) {
+            const collName = collectionNames[i].name;
+            if (collName.includes("Absent") || collName.includes("Holiday")) {
+                let date = collName.replace("Absent", "").replace("Holiday","").replace("Dayscholar_","").replace("_","").replace("Partially","");
+                const collectionData = await DB.collection(collName).find({}).toArray();
+                collectionData.forEach(doc => {
+                    doc.Date = date;
+                    if(!doc.status){
+                        doc.status="Absent"
+                    }
+                    totalAbsentStudents.push(doc);
+                });
+            }
+        }
+        res.json(totalAbsentStudents);
+    } catch (error) {
+        console.error("Error retrieving absent students:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
+//For * date for present
+app.get('/api/attendance/present', async (req, res) => {
+    try {
+        const collectionNames = await DB.listCollections().toArray();
+        let totalAbsentStudents = [];
+        for (let i = 0; i < collectionNames.length; i++) {
+            const collName = collectionNames[i].name;
+            if (collName.includes("Present") || collName.includes("Partially_Absent") || collName.includes("Dayscholar_Present") ){
+                let date = collName.replace("Present", "").replace("Dayscholar_Present", "").replace("Dayscholar_","").replace("_","").replace("PartiallyAbsent","");
+                const collectionData = await DB.collection(collName).find({}).toArray();
+                collectionData.forEach(doc => {
+                    doc.Date = date;
+                    if(!doc.status){
+                        doc.status="Prsent"
+                    }
+                    totalAbsentStudents.push(doc);
+                });
+            }
+        }
+        res.json(totalAbsentStudents);
+    } catch (error) {
+        console.error("Error retrieving absent students:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
 app.get('/api/attendance/partiallyabsent/:date', async (req, res) => {
     const date=req.params.date
     const TotalStudentsPartiallyAbsent = [
@@ -88,7 +143,7 @@ app.get('/masterdb',async(req,res)=>{
     res.json(wholeData)
 })
  
-app.get('/master', master)
+// app.get('/master', master)
 
 app.post('/upload-excel', upload.single('fileUpload'),uploader );
 
