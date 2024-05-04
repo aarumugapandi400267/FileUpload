@@ -2,6 +2,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import multer from 'multer';
+import moment from 'moment'
 // import xlsx from 'xlsx';
 import { MongoClient } from 'mongodb';
 import cors from 'cors'
@@ -77,8 +78,10 @@ app.get('/api/attendance/absent', async (req, res) => {
             if (collName.includes("Absent") || collName.includes("Holiday")) {
                 let date = collName.replace("Absent", "").replace("Holiday","").replace("Dayscholar_","").replace("_","").replace("Partially","");
                 const collectionData = await DB.collection(collName).find({}).toArray();
+                const inputFormat = 'DD-MM-YYYY';
+                const outputFormat = 'MM-DD-YYYY';
                 collectionData.forEach(doc => {
-                    doc.Date = date;
+                    doc.Date = moment(date,inputFormat).format(outputFormat);
                     if(!doc.status){
                         doc.status="Absent"
                     }
@@ -103,8 +106,10 @@ app.get('/api/attendance/present', async (req, res) => {
             if (collName.includes("Present") || collName.includes("Partially_Absent") || collName.includes("Dayscholar_Present") ){
                 let date = collName.replace("Present", "").replace("Dayscholar_Present", "").replace("Dayscholar_","").replace("_","").replace("PartiallyAbsent","");
                 const collectionData = await DB.collection(collName).find({}).toArray();
+                const inputFormat = 'DD-MM-YYYY';
+                const outputFormat = 'MM-DD-YYYY';
                 collectionData.forEach(doc => {
-                    doc.Date = date;
+                    doc.Date = moment(date,inputFormat).format(outputFormat);
                     if(!doc.status){
                         doc.status="Prsent"
                     }
