@@ -1,5 +1,5 @@
 import xlsx from 'xlsx';
-import { DB, Student_ManagementDB } from '../server.js';
+import { DB ,Student_ManagementDB } from './Database/DB.js';
 var date
 
 const uploader = async (req, res) => {
