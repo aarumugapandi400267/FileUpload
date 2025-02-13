@@ -1,5 +1,5 @@
 import xlsx from 'xlsx';
-import { DB, Student_ManagementDB } from '../server.js';
+import { DB ,Student_ManagementDB } from './Database/DB.js';
 var date
 
 const uploader = async (req, res) => {
@@ -28,7 +28,7 @@ const uploader = async (req, res) => {
             collection == "Absent" && name == "absent" ||
             collection == "Present" && name == "present" ||
             collection == "Holiday" && name == "holiday_students" ||
-            collection == "Partially_Absent" && name == "partially_absent" ||
+            collection == "Partially_Absent" && name == "Partially_Absent" ||
             collection == "Dayscholar_Absent" && name == "dayscholar_absent" ||
             collection == "Dayscholar_Present" && name == "dayscholar_present"
         ) {
